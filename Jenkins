@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "waseemdevops/node-app:latest" // Optional if pushing
+        DOCKER_CREDENTIALS = "Maavik@1234"               // Optional if pushing
+        CONTAINER_NAME = "my-app"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build & Test') {
+            steps {
+                echo 'Installing dependencies and running tests'
+                sh 'npm install'
+                sh 'npm test'
+            }
+        }
+
+        stage('Dockerize') {
+            steps {
+                echo 'Building Docker image'
+                sh "docker build -t $DOCKER_IMAGE ."
+            }
+        }
+
+        stage('Push to DockerHub') {
+            when {
+                expression { env.DOCKER_IMAGE != '' }
+            }
+            steps {
+                echo 'Pushing Docker image to DockerHub'
+                withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS", usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh "echo $PASS | docker login -u $USER --password-stdin"
+                    sh "docker push $DOCKER_IMAGE"
+                }
+            }
+        }
+
+        stage('Deploy on Ubuntu Server') {
+            steps {
+                echo 'Deploying Docker container'
+                sh """
+                    docker stop $CONTAINER_NAME || true
+                    docker rm $CONTAINER_NAME || true
+                    docker run -d --name $CONTAINER_NAME -p 3000:3000 $DOCKER_IMAGE
+                """
+            }
+        }
+    }
+}
+
