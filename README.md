@@ -19,15 +19,15 @@ This project demonstrates a simple **CI/CD pipeline** for a sample Node.js appli
 ```
 ci-cd-node-app/
 │
-├── .gitignore/                    # Node.js application source code
-├── Dockerfile              # Docker configuration for application
-├── Jenkinsfile             # Jenkins pipeline definition
-├── README.md               # Project documentation
-├── deployment-proof/       # Proof of deployment (screenshots or URL)
+├── .gitignore/               
+├── Dockerfile              
+├── Jenkinsfile             
+├── README.md               
+├── deployment-proof/       
 ├── app.js/
-│-- logoswayatt.png    # Architecture diagram
-└── package-lock.json         # Challenges, tools, and improvements
-└── package.json         # Challenges, tools, and improvements
+│-- logoswayatt.png    
+└── package-lock.json         
+└── package.json         
 ```
 
 ---
