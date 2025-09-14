@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "waseemdevops/logo-server:latest" // Replace if using DockerHub
-        DOCKER_CREDENTIALS = "dockerhub-cred-id"                     // Replace with your Jenkins DockerHub credentials ID
+        DOCKER_IMAGE = "waseemdevops/logo-server:latest" 
+        DOCKER_CREDENTIALS = "dockerhub-cred-id"                     
         CONTAINER_NAME = "logo-server"
-        HOST_PORT = "3000"      // Change if your app uses a different port
-        CONTAINER_PORT = "3000" // Container port exposed in Dockerfile
+        HOST_PORT = "3000"      
+        CONTAINER_PORT = "3000" 
     }
 
     stages {
