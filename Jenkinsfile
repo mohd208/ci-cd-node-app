@@ -2,15 +2,18 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "waseemdevops/node-app:latest" // Optional if pushing
-        DOCKER_CREDENTIALS = "Maavik@1234"               // Optional if pushing
-        CONTAINER_NAME = "my-app"
+        DOCKER_IMAGE = "waseemdevops/logo-server:latest" // Replace if using DockerHub
+        DOCKER_CREDENTIALS = "Maavik@1234"                     // Replace with your Jenkins DockerHub credentials ID
+        CONTAINER_NAME = "logo-server"
+        HOST_PORT = "3000"      // Change if your app uses a different port
+        CONTAINER_PORT = "3000" // Container port exposed in Dockerfile
     }
 
     stages {
 
         stage('Checkout') {
             steps {
+                echo 'Checking out code from GitHub'
                 checkout scm
             }
         }
@@ -45,13 +48,22 @@ pipeline {
 
         stage('Deploy on Ubuntu Server') {
             steps {
-                echo 'Deploying Docker container'
+                echo 'Deploying Docker container on Ubuntu server'
                 sh """
                     docker stop $CONTAINER_NAME || true
                     docker rm $CONTAINER_NAME || true
-                    docker run -d --name $CONTAINER_NAME -p 3000:3000 $DOCKER_IMAGE
+                    docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT $DOCKER_IMAGE
                 """
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check logs for details.'
         }
     }
 }
