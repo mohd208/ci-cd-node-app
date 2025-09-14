@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "waseemdevops/logo-server:latest" // Replace if using DockerHub
-        DOCKER_CREDENTIALS = "Maavik@1234"                     // Replace with your Jenkins DockerHub credentials ID
+        DOCKER_CREDENTIALS = "dockerhub-cred-id"                     // Replace with your Jenkins DockerHub credentials ID
         CONTAINER_NAME = "logo-server"
         HOST_PORT = "3000"      // Change if your app uses a different port
         CONTAINER_PORT = "3000" // Container port exposed in Dockerfile
