@@ -1,61 +1,142 @@
-# Logo Server
+# DevOps Task – CI/CD Pipeline with Jenkins & Docker
 
-A simple Express.js web server that serves the Swayatt logo image.
+## 1. Project Overview
 
-## What is this app?
+This project demonstrates a simple **CI/CD pipeline** for a sample Node.js application using **AWS EC2**, **Jenkins**, **Docker**, and **GitHub**. The pipeline automates the process of building, testing, containerizing, and deploying the application, following best DevOps practices.
 
-This is a lightweight Node.js application built with Express.js that serves a single logo image (`logoswayatt.png`) when accessed through a web browser. When you visit the root URL, the server responds by displaying the Swayatt logo.
+**Key Features:**
 
-## Prerequisites
+* Automated CI/CD pipeline triggered by GitHub push.
+* Containerized deployment using Docker.
+* Docker images pushed to DockerHub registry.
+* Deployed on **AWS EC2** instance.
+* Clear documentation and architecture diagram.
 
-- Node.js (version 12 or higher)
-- npm (Node Package Manager)
+---
 
-## Installation
+## 2. Repository Structure
 
-1. Clone or download this repository
-2. Navigate to the project directory:
-   ```bash
-   cd "devops task"
-   ```
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
+```
+ci-cd-node-app/
+│
+├── .gitignore/                    # Node.js application source code
+├── Dockerfile              # Docker configuration for application
+├── Jenkinsfile             # Jenkins pipeline definition
+├── README.md               # Project documentation
+├── deployment-proof/       # Proof of deployment (screenshots or URL)
+├── app.js/
+│-- logoswayatt.png    # Architecture diagram
+└── package-lock.json         # Challenges, tools, and improvements
+└── package.json         # Challenges, tools, and improvements
+```
 
-## How to Start the App
+---
 
-Run the following command:
+## 3. Architecture Diagram
+
+![Architecture Diagram](./docs/architecture.png)
+
+**Description:**
+
+1. Developers push code to GitHub repository (`main` or `dev` branch).
+2. GitHub webhook triggers Jenkins pipeline automatically.
+3. Jenkins performs the following stages:
+
+   * **Build**: Installs dependencies and runs tests.
+   * **Dockerize**: Builds Docker image.
+   * **Push to Registry**: Pushes Docker image to DockerHub.
+   * **Deploy**: Deploys the container to AWS EC2.
+
+---
+
+## 4. CI/CD Pipeline Flow
+
+**Jenkins Pipeline Stages:**
+
+| Stage                | Description                                                                        |
+| -------------------- | ---------------------------------------------------------------------------------- |
+| **Build**            | Installs Node.js dependencies using `npm install` and runs tests using `npm test`. |
+| **Dockerize**        | Builds Docker image using `Dockerfile`.                                            |
+| **Push to Registry** | Pushes Docker image to DockerHub.                                                  |
+| **Deploy**           | Pulls the Docker image on EC2 and runs the container.                              |
+
+**Pipeline Trigger:** GitHub webhook on push to `main` or `dev` branch.
+
+---
+
+## 5. Setup Instructions
+
+**1. AWS EC2 Setup:**
+
 ```bash
-npm start
+# Update packages
+sudo apt update && sudo apt upgrade -y
+
+# Install Docker
+sudo apt install docker.io -y
+sudo systemctl enable docker
+sudo systemctl start docker
+
+# Add user to docker group
+sudo usermod -aG docker $USER
 ```
 
-The server will start and display:
-```
-Server running on http://localhost:3000
-```
+**2. Jenkins Setup:**
 
-## Usage
+* Install Jenkins on EC2.
+* Create a pipeline job with the following Jenkinsfile
 
-Once the server is running, open your web browser and navigate to:
-```
-http://localhost:3000
-```
 
-You will see the Swayatt logo displayed in your browser.
+**3. GitHub Webhook Setup:**
 
-## Project Structure
+* Go to repository settings → Webhooks → Add webhook.
+* Set **Payload URL** to `http://13.51.164.233:8080/github-webhook/`.
+* Content type: `application/json`.
+* Trigger: **Just the push event**.
 
-```
-├── app.js              # Main server file
-├── package.json        # Project dependencies and scripts
-├── logoswayatt.png     # Logo image file
-└── README.md          # This file
-```
+---
 
-## Technical Details
+## 6. Deployment Proof
 
-- **Framework**: Express.js
-- **Port**: 3000
-- **Endpoint**: GET `/` - serves the logo image
-- **File served**: `logoswayatt.png`
+* Public URL: `http://13.51.164.233:3000/`
+* Or see `deployment-proof/` folder for screenshots of:
+
+  * Jenkins pipeline stages
+  * Running Docker container
+  * Application running in browser
+
+---
+
+## 7. Tools & Services Used
+
+| Tool/Service | Purpose               |
+| ------------ | --------------------- |
+| AWS EC2      | Server for deployment |
+| Jenkins      | CI/CD automation      |
+| Docker       | Containerization      |
+| DockerHub    | Docker image registry |
+| GitHub       | Version control       |
+| Node.js      | Sample application    |
+
+---
+
+## 8. Challenges & Solutions
+
+* **Challenge:** Jenkins pipeline not triggering automatically.
+  **Solution:** Configured GitHub webhook with correct URL and credentials.
+
+* **Challenge:** Docker container failed on redeploy.
+  **Solution:** Added `docker stop` and `docker rm` commands before running a new container.
+
+* **Challenge:** Environment variable management.
+  **Solution:** Used Jenkins credentials and `.env` file for sensitive data.
+
+---
+
+## 9. Possible Improvements
+
+* Use **AWS ECS** or **EKS** for scalable deployment.
+* Implement **Terraform** for Infrastructure as Code.
+* Add **automated rollback** in Jenkins pipeline.
+* Add **unit/integration tests** and code coverage reports.
+
